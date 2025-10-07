@@ -33,3 +33,8 @@ pnpm-debug.log*
 
 .astro/*
 !.astro/types.d.ts
+
+# Shared Copilot instruction symlinks
+.github/instructions/*.instructions.md
+.github/chatmodes
+.github/prompts
