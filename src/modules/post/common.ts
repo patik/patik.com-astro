@@ -1,32 +1,30 @@
-import { render } from 'astro:content';
+import { render } from 'astro:content'
 
-import { getAllEntries, idToSlug } from '@/modules/common';
-import { COLLECTIONS } from '@/constants/collections';
+import { getAllEntries, idToSlug } from '@/modules/common'
+import { COLLECTIONS } from '@/constants/collections'
 
-import type { Post, PostCollection } from '@/types/post';
+import type { Post, PostCollection } from '@/types/post'
 
 /** Sorted posts. */
-export const getAllPosts = (): Promise<PostCollection[]> => getAllEntries(COLLECTIONS.POST);
+export const getAllPosts = (): Promise<PostCollection[]> => getAllEntries(COLLECTIONS.POST)
 
-export const getPostsWithReadingTimeFromPosts = async (
-  posts: PostCollection[]
-): Promise<Post[]> => {
-  const readingTimePromises = posts.map(async (post) => {
-    const { remarkPluginFrontmatter } = await render(post);
-    const { readingTime } = remarkPluginFrontmatter;
-    return { readingTime };
-  });
-  const readingTimes = await Promise.all(readingTimePromises);
+export const getPostsWithReadingTimeFromPosts = async (posts: PostCollection[]): Promise<Post[]> => {
+    const readingTimePromises = posts.map(async (post) => {
+        const { remarkPluginFrontmatter } = await render(post)
+        const { readingTime } = remarkPluginFrontmatter
+        return { readingTime }
+    })
+    const readingTimes = await Promise.all(readingTimePromises)
 
-  // other frontmatter props are in post.data...
-  // readingTimes is in post.readingTimes
-  const postsWithReadingTimeAndSlug = posts.map((post, index) => ({
-    ...idToSlug(post),
-    ...readingTimes[index],
-  }));
+    // other frontmatter props are in post.data...
+    // readingTimes is in post.readingTimes
+    const postsWithReadingTimeAndSlug = posts.map((post, index) => ({
+        ...idToSlug(post),
+        ...readingTimes[index],
+    }))
 
-  return postsWithReadingTimeAndSlug;
-};
+    return postsWithReadingTimeAndSlug
+}
 
 /**
  * Prefer over getAllPosts()
@@ -34,4 +32,4 @@ export const getPostsWithReadingTimeFromPosts = async (
  * My custom type with slug, readingTime, etc.
  */
 export const getAllPostsWithReadingTime = async (): Promise<Post[]> =>
-  getPostsWithReadingTimeFromPosts(await getAllPosts());
+    getPostsWithReadingTimeFromPosts(await getAllPosts())

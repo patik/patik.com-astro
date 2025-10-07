@@ -17,10 +17,8 @@ export type Theme = (typeof THEMES)[number];
 export type Mode = ValueUnion<typeof MODES>;
 
 export type ImageSizes = {
-  FIXED: Record<string, Pick<LocalImageProps, 'width' | 'height'>>;
-  RESPONSIVE: Record<string, Pick<LocalImageProps, 'widths' | 'sizes'>>;
+    FIXED: Record<string, Pick<LocalImageProps, 'width' | 'height'>>;
+    RESPONSIVE: Record<string, Pick<LocalImageProps, 'widths' | 'sizes'>>;
 };
-
-export type ChangeThemeCustomEvent = CustomEvent<{ theme: Theme }>;
 
 export type Breakpoint = keyof typeof TW_WIDTHS;

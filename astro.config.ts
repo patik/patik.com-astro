@@ -1,26 +1,26 @@
-import path from 'path';
+import path from 'path'
 
-import mdx from '@astrojs/mdx';
-import partytown from '@astrojs/partytown';
-import react from '@astrojs/react';
-import tailwind from '@astrojs/tailwind';
-import icon from 'astro-icon';
-import { defineConfig } from 'astro/config';
+import mdx from '@astrojs/mdx'
+import partytown from '@astrojs/partytown'
+import react from '@astrojs/react'
+import tailwind from '@astrojs/tailwind'
+import icon from 'astro-icon'
+import { defineConfig } from 'astro/config'
 
 // must use relative imports, and their entire import subtrees
-import { rehypeExternalLinks } from './plugins/rehype-external-links';
-import { remarkReadingTime } from './plugins/remark-reading-time.mjs';
+import { rehypeExternalLinks } from './plugins/rehype-external-links'
+import { remarkReadingTime } from './plugins/remark-reading-time.mjs'
 //
 // all relative imports in subtree
 // any of these files must not import CONFIG with env vars
-import { envSchema, PROCESS_ENV } from './src/config/process-env';
-import { expressiveCodeIntegration } from './src/libs/integrations/expressive-code';
-import { sitemapIntegration } from './src/libs/integrations/sitemap';
+import { envSchema, PROCESS_ENV } from './src/config/process-env'
+import { expressiveCodeIntegration } from './src/libs/integrations/expressive-code'
+import { sitemapIntegration } from './src/libs/integrations/sitemap'
 
-const { SITE_URL } = PROCESS_ENV;
+const { SITE_URL } = PROCESS_ENV
 
-const remarkPlugins = [remarkReadingTime];
-const rehypePlugins = [rehypeExternalLinks];
+const remarkPlugins = [remarkReadingTime]
+const rehypePlugins = [rehypeExternalLinks]
 
 export default defineConfig({
     site: SITE_URL,
@@ -59,4 +59,4 @@ export default defineConfig({
             noExternal: ['zod'],
         },
     },
-});
+})

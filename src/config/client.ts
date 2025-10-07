@@ -21,13 +21,13 @@ const configClientData: ConfigClientType = {
     BLUR_IMAGE_DELAY: 200,
     DEFAULT_MODE: 'light',
     DEFAULT_THEME: 'default-light',
-    AUTHOR_NAME: 'Nemanja Mitic',
-    AUTHOR_EMAIL: 'nemanja.mitic.elfak@hotmail.com',
-    AUTHOR_GITHUB: 'https://github.com/nemanjam',
-    AUTHOR_LINKEDIN: 'https://www.linkedin.com/in/nemanja-mitic',
-    AUTHOR_TWITTER: 'https://x.com/nemanja_codes',
-    AUTHOR_YOUTUBE: 'https://www.youtube.com/@nemanja_codes',
-    REPO_URL: 'https://github.com/nemanjam/nemanjam.github.io',
+    AUTHOR_NAME: 'Craig Patik',
+    AUTHOR_EMAIL: 'craig@patik.com',
+    AUTHOR_GITHUB: 'https://github.com/patik',
+    AUTHOR_LINKEDIN: 'https://www.linkedin.com/in/craig.patik',
+    AUTHOR_TWITTER: 'https://twitter.com/craigpatik',
+    AUTHOR_YOUTUBE: 'https://www.youtube.com/@craigpatik',
+    REPO_URL: 'https://github.com/patik/patik.com-astro',
 };
 
 export const CONFIG_CLIENT = validateData(configClientData, configClientSchema);

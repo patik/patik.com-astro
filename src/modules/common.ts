@@ -1,15 +1,15 @@
-import { getCollection } from 'astro:content';
+import { getCollection } from 'astro:content'
 
-import { isProd } from '@/utils/environment';
-import { isPreviewMode } from '@/utils/preview';
+import { isProd } from '@/utils/environment'
+import { isPreviewMode } from '@/utils/preview'
 
-import type { CollectionEntry, CollectionKey } from 'astro:content';
+import type { CollectionEntry, CollectionKey } from 'astro:content'
 
 /*-------------------------------- all entries ------------------------------*/
 
 export interface GetAllEntriesOptions {
-  skipSort?: boolean;
-  includeDrafts?: boolean;
+    skipSort?: boolean
+    includeDrafts?: boolean
 }
 
 /**
@@ -19,57 +19,54 @@ export interface GetAllEntriesOptions {
  * ONLY place to filter draft posts and projects.
  */
 export const getAllEntries = async <T extends CollectionKey>(
-  collectionName: T,
-  options?: GetAllEntriesOptions
+    collectionName: T,
+    options?: GetAllEntriesOptions,
 ): Promise<CollectionEntry<T>[]> => {
-  const { skipSort = false, includeDrafts = isPreviewMode() } = options ?? {};
+    const { skipSort = false, includeDrafts = isPreviewMode() } = options ?? {}
 
-  const entries = await getCollection<T>(collectionName, ({ data }) => {
-    const isProdAndDraft = isProd && data.draft;
-    return !isProdAndDraft || includeDrafts;
-  });
+    const entries = await getCollection<T>(collectionName, ({ data }) => {
+        const isProdAndDraft = isProd && data.draft
+        return !isProdAndDraft || includeDrafts
+    })
 
-  if (skipSort) return entries;
+    if (skipSort) return entries
 
-  const sortedEntries = sortEntriesByDateDesc(entries);
-  return sortedEntries;
-};
+    const sortedEntries = sortEntriesByDateDesc(entries)
+    return sortedEntries
+}
 
 /*-------------------------- sort by updatedDate or publishDate ------------------------*/
 
 // just for sorting
 export const getEntryLastDate = <T extends CollectionKey>(entry: CollectionEntry<T>): Date =>
-  entry.data.updatedDate ?? entry.data.publishDate;
+    entry.data.updatedDate ?? entry.data.publishDate
 
 export const sortEntriesByDateDesc = <T extends CollectionKey>(entries: CollectionEntry<T>[]) =>
-  entries.slice().sort((a, b) => getEntryLastDate(b).valueOf() - getEntryLastDate(a).valueOf());
+    entries.slice().sort((a, b) => getEntryLastDate(b).valueOf() - getEntryLastDate(a).valueOf())
 
 /*------------------------- lastAccessDate for components -----------------------*/
 
 export interface EntryDates {
-  publishDate: Date;
-  updatedDate?: Date;
+    publishDate: Date
+    updatedDate?: Date
 }
 export interface EntryDatesResult {
-  lastAccessDate: Date;
-  isUpdatedDate: boolean;
+    lastAccessDate: Date
+    isUpdatedDate: boolean
 }
 
-export const getPublishedOrUpdatedDate = ({
-  publishDate,
-  updatedDate,
-}: EntryDates): EntryDatesResult => {
-  const result = {
-    lastAccessDate: updatedDate ?? publishDate,
-    isUpdatedDate: Boolean(updatedDate),
-  };
+export const getPublishedOrUpdatedDate = ({ publishDate, updatedDate }: EntryDates): EntryDatesResult => {
+    const result = {
+        lastAccessDate: updatedDate ?? publishDate,
+        isUpdatedDate: Boolean(updatedDate),
+    }
 
-  return result;
-};
+    return result
+}
 
 /*------------------------- for content layer -----------------------*/
 
 export const idToSlug = <T extends { id: unknown }>(item: T): T & { slug: T['id'] } => ({
-  ...item,
-  slug: item.id,
-});
+    ...item,
+    slug: item.id,
+})

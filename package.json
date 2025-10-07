@@ -17,20 +17,9 @@
         "clean": "rm -rf node_modules pnpm-lock.yaml",
         "upg": "pnpm up -i --latest",
         "check-types": "tsc --noEmit --pretty",
-        "deploy:nginx": "bash scripts/deploy-nginx.sh '~/traefik-proxy/apps/nmc-nginx-with-volume/website' arm1",
-        "deploy:nginx:local": "bash scripts/deploy-nginx.sh '~/traefik-proxy/apps/nmc-nginx-with-volume/website' lxc11",
-        "deploy:nginx:pi": "bash scripts/deploy-nginx.sh '~/traefik-proxy/apps/nmc-nginx-with-volume/website' pi",
-        "deploy:docker": "bash scripts/deploy-docker.sh arm1 '~/traefik-proxy/apps/nmc-docker' patik/patik.com-astro",
-        "deploy:docker:local": "bash scripts/deploy-docker.sh lxc11 '~/traefik-proxy/apps/nmc-docker' patik/patik.com-astro",
-        "deploy:docker:pi": "bash scripts/deploy-docker.sh pi '~/traefik-proxy/apps/nmc-docker' patik/patik.com-astro",
-        "docker:build:push:arm": "docker buildx build -f ./docker/Dockerfile -t patik/patik.com-astro --build-arg ARG_SITE_URL_ARM64='https://nmc-docker.arm1.patik.com' --build-arg ARG_PLAUSIBLE_SCRIPT_URL='https://plausible.arm1.patik.com/js/script.js' --build-arg ARG_PLAUSIBLE_DOMAIN='patik.com' --platform linux/arm64 --progress=plain --push .",
-        "docker:build:push:x86": "docker buildx build -f ./docker/Dockerfile -t patik/patik.com-astro --build-arg ARG_SITE_URL_AMD64='https://nmc-docker.local.patik.com' --build-arg ARG_PLAUSIBLE_SCRIPT_URL='https://plausible.arm1.patik.com/js/script.js' --build-arg ARG_PLAUSIBLE_DOMAIN='patik.com' --platform linux/amd64 --push --progress=plain .",
-        "docker:push": "docker push patik/patik.com-astro",
-        "pi": "pnpm build:nginx:pi && pnpm deploy:nginx:pi",
         "local": "pnpm build:nginx:local && pnpm deploy:nginx:local",
         "nginx": "pnpm build:nginx && pnpm deploy:nginx",
-        "tunnel": "ssh -R *:1081:localhost:3000 amd1c",
-        "dc:up": "docker compose up --build --force-recreate -d"
+        "tunnel": "ssh -R *:1081:localhost:3000 amd1c"
     },
     "dependencies": {
         "@astrojs/markdown-remark": "^6.3.7",

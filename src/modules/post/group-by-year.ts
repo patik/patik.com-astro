@@ -1,26 +1,26 @@
-import { getEntryLastDate } from '@/modules/common';
+import { getEntryLastDate } from '@/modules/common'
 
-import type { Post, PostsByYear } from '@/types/post';
+import type { Post, PostsByYear } from '@/types/post'
 
 export const groupPostsByYear = (sortedPosts: Post[]): PostsByYear => {
-  const postsByYear: PostsByYear = {
-    years: [],
-    posts: {},
-  };
-
-  const groupedPosts = sortedPosts.reduce((result, post) => {
-    const postDate = getEntryLastDate(post);
-    const year = postDate.getFullYear().toString();
-
-    if (!result.posts[year]) {
-      result.years.push(year);
-      result.posts[year] = [];
+    const postsByYear: PostsByYear = {
+        years: [],
+        posts: {},
     }
 
-    result.posts[year].push(post);
+    const groupedPosts = sortedPosts.reduce((result, post) => {
+        const postDate = getEntryLastDate(post)
+        const year = postDate.getFullYear().toString()
 
-    return result;
-  }, postsByYear);
+        if (!result.posts[year]) {
+            result.years.push(year)
+            result.posts[year] = []
+        }
 
-  return groupedPosts;
-};
+        result.posts[year].push(post)
+
+        return result
+    }, postsByYear)
+
+    return groupedPosts
+}

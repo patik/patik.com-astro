@@ -1,33 +1,31 @@
 ---
-import { Icon } from 'astro-icon/components';
+import { Icon } from 'astro-icon/components'
 
-import BaseHead from '@/components/BaseHead.astro';
-import Footer from '@/components/Footer.astro';
-import Header from '@/components/Header.astro';
-import ScrollToTop from '@/components/react/ScrollToTop';
-import Breakpoints from '@/components/utils/breakpoints.astro';
-import { isProd } from '@/utils/environment';
+import BaseHead from '@/components/BaseHead.astro'
+import Footer from '@/components/Footer.astro'
+import Header from '@/components/Header.astro'
+import ScrollToTop from '@/components/react/ScrollToTop'
+import Breakpoints from '@/components/utils/breakpoints.astro'
+import { isProd } from '@/utils/environment'
 
-import type { BaseHeadProps } from '@/components/BaseHead.astro';
+import type { BaseHeadProps } from '@/components/BaseHead.astro'
 
 export interface BaseProps extends BaseHeadProps {}
 
-const { metadata } = Astro.props as BaseProps;
+const { metadata } = Astro.props as BaseProps
 ---
 
 <html lang="en">
-  <BaseHead {metadata} />
-  <body
-    class="relative flex flex-col min-h-screen min-w-80 bg-base-100 transition-colors duration-500"
-  >
-    <Header />
-    <slot />
-    <Footer />
+    <BaseHead {metadata} />
+    <body class="relative flex flex-col min-h-screen min-w-80 bg-base-100 transition-colors duration-500">
+        <Header />
+        <slot />
+        <Footer />
 
-    <ScrollToTop client:only="react">
-      <Icon name="mdi:arrow-up-thin" class="h-10 w-10 text-content hover:text-links-hover" />
-    </ScrollToTop>
+        <ScrollToTop client:only="react">
+            <Icon name="mdi:arrow-up-thin" class="h-10 w-10 text-content hover:text-links-hover" />
+        </ScrollToTop>
 
-    {!isProd && <Breakpoints />}
-  </body>
+        {!isProd && <Breakpoints />}
+    </body>
 </html>
