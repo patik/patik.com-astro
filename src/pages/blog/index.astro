@@ -16,8 +16,18 @@ export async function getStaticPaths() {
 
 // 2. For your template, you can get the entry directly from the prop
 console.log('Astro.props ', Astro.props)
+const posts = await getCollection('blog')
 ---
 
 <Layout>
     <p>Blog index</p>
+    <ul>
+        {
+            posts.map((post) => (
+                <li>
+                    <a href={`/blog/${post.id}`}>{post.data.title}</a>
+                </li>
+            ))
+        }
+    </ul>
 </Layout>

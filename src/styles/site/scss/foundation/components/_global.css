@@ -67,11 +67,13 @@ meta.foundation-mq-large {
     width: var(--large-screen);
 }
 
-/* We use this as cursors values for enabling the option of having custom cursors in the whole site's stylesheet */
---cursor-crosshair-value: crosshair;
---cursor-default-value: default;
---cursor-pointer-value: pointer;
---cursor-help-value: help;
+:root {
+    /* We use this as cursors values for enabling the option of having custom cursors in the whole site's stylesheet */
+    --cursor-crosshair-value: crosshair;
+    --cursor-default-value: default;
+    --cursor-pointer-value: pointer;
+    --cursor-help-value: help;
+}
 
 *,
 *:before,
