@@ -1,13 +1,15 @@
 body {
     background-color: white;
-    color: $dark-charcoal;
+    color: var(--dark-charcoal);
 }
 
 @media (prefers-color-scheme: dark) {
-    $body-font-color: white;
+    :root {
+        --body-font-color: white;
+    }
 
     body {
-        background-color: $dark-charcoal;
+        background-color: var(--dark-charcoal);
         color: white;
     }
 
@@ -16,7 +18,7 @@ body {
 
         &:hover,
         &:focus {
-            color: $anchor-font-color-hover;
+            color: var(--anchor-font-color-hover, #0073aa);
         }
     }
 }
