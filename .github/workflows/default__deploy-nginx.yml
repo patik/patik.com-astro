@@ -4,18 +4,18 @@ on:
   push:
     # enabled
     branches:
-      - 'main'
+      - "main"
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - "v[0-9]+.[0-9]+.[0-9]+"
   pull_request:
     branches:
-      - 'disabled-main'
+      - "disabled-main"
   workflow_dispatch:
 
 env:
-  SITE_URL: 'https://nemanjamitic.com'
-  PLAUSIBLE_SCRIPT_URL: 'https://plausible.arm1.nemanjamitic.com/js/script.js'
-  PLAUSIBLE_DOMAIN: 'nemanjamitic.com'
+  SITE_URL: "https://patik.com"
+  PLAUSIBLE_SCRIPT_URL: "https://plausible.arm1.patik.com/js/script.js"
+  PLAUSIBLE_DOMAIN: "patik.com"
 
 jobs:
   deploy:
@@ -36,7 +36,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24.7.0
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: "https://registry.npmjs.org"
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -47,7 +47,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       # fix this for turbo
-      - name: Build nemanjamiticcom
+      - name: Build patikcom
         run: pnpm build
 
       - name: Clean up website dir
@@ -73,8 +73,8 @@ jobs:
           username: ${{ secrets.REMOTE_USERNAME }}
           key: ${{ secrets.REMOTE_KEY_ED25519 }}
           port: ${{ secrets.REMOTE_PORT }}
-          source: 'dist/'
-          target: '/home/ubuntu/traefik-proxy/apps/nmc-nginx-with-volume/website'
+          source: "dist/"
+          target: "/home/ubuntu/traefik-proxy/apps/nmc-nginx-with-volume/website"
           # remove /dist path segment
           strip_components: 1
 

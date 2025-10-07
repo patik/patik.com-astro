@@ -23,7 +23,7 @@ Another point is that, with option 2, we avoid the gap of unencrypted traffic on
 
 The downside is that Rathole will exclusively occupy ports `80` and `443` on the VPS, preventing any other process from using them. We won't be able to run other web servers on that VPS, so it's best to use a small one dedicated to this purpose.
 
-Unless we use a load balancer [Load balancing multiple Rathole tunnels with Traefik HTTP and TCP routers](https://nemanjamitic.com/blog/2025-05-29-traefik-load-balancer).
+Unless we use a load balancer [Load balancing multiple Rathole tunnels with Traefik HTTP and TCP routers](https://patik.com/blog/2025-05-29-traefik-load-balancer).
 
 ![Rathole Traefik architecture diagram](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/9s3u4wfhv5f2c6q8vs9m.png)
 
@@ -76,18 +76,18 @@ After configuration file we define a Rathole server container with [docker-compo
 # docker-compose.yml
 
 services:
-  rathole:
-    image: rapiz1/rathole:v0.5.0
-    container_name: rathole
-    command: --server /config/rathole.server.toml
-    restart: unless-stopped
-    ports:
-      # host:container
-      - 2333:2333
-      - 80:5080
-      - 443:5443
-    volumes:
-      - ./rathole.server.toml:/config/rathole.server.toml:ro
+    rathole:
+        image: rapiz1/rathole:v0.5.0
+        container_name: rathole
+        command: --server /config/rathole.server.toml
+        restart: unless-stopped
+        ports:
+            # host:container
+            - 2333:2333
+            - 80:5080
+            - 443:5443
+        volumes:
+            - ./rathole.server.toml:/config/rathole.server.toml:ro
 ```
 
 In the command, we set the `--server` option, pass the `.toml` configuration file, and mount it as a read-only bind-mount volume.
@@ -142,47 +142,47 @@ Here is the Rathole client container and the important part of the Traefik conta
 # core/docker-compose.local.yml
 
 services:
-  rathole:
-    # 1. default official x86 image
-    image: rapiz1/rathole:v0.5.0
+    rathole:
+        # 1. default official x86 image
+        image: rapiz1/rathole:v0.5.0
 
-    # 2. custom built ARM image (for Raspberry pi)
-    # image: nemanjamitic/my-rathole-arm64:v1.0
+        # 2. custom built ARM image (for Raspberry pi)
+        # image: nemanjamitic/my-rathole-arm64:v1.0
 
-    # 3. build for arm - AVOID, use prebuilt ARM image above
-    # build: https://github.com/rapiz1/rathole.git#main
-    # platform: linux/arm64
+        # 3. build for arm - AVOID, use prebuilt ARM image above
+        # build: https://github.com/rapiz1/rathole.git#main
+        # platform: linux/arm64
 
-    container_name: rathole
-    command: --client /config/rathole.client.toml
-    restart: unless-stopped
-    volumes:
-      - ./rathole.client.toml:/config/rathole.client.toml:ro
-    networks:
-      - proxy
+        container_name: rathole
+        command: --client /config/rathole.client.toml
+        restart: unless-stopped
+        volumes:
+            - ./rathole.client.toml:/config/rathole.client.toml:ro
+        networks:
+            - proxy
 
-  traefik:
-    image: 'traefik:v2.9.8'
-    container_name: traefik
-    restart: unless-stopped
+    traefik:
+        image: 'traefik:v2.9.8'
+        container_name: traefik
+        restart: unless-stopped
 
-    # for this to work both services must be defined in the same docker-compose.yml file
-    depends_on:
-      - rathole
+        # for this to work both services must be defined in the same docker-compose.yml file
+        depends_on:
+            - rathole
 
-    # other config...
+        # other config...
 
-    networks:
-      - proxy
+        networks:
+            - proxy
 
-    # leave this commented out, just for explanation
-    # Rathole will pass Traffic through proxy network directly on 80 and 443
-    # defined in rathole.client.toml
-    # ports:
-    #   - '80:80'
-    #   - '443:443'
+        # leave this commented out, just for explanation
+        # Rathole will pass Traffic through proxy network directly on 80 and 443
+        # defined in rathole.client.toml
+        # ports:
+        #   - '80:80'
+        #   - '443:443'
 
-    # other config...
+        # other config...
 ```
 
 Let's start with the Rathole service. Similarly to the server command, we run the Rathole binary, this time in client mode with `--client` and we pass the client config file `/config/rathole.client.toml` which we also bind mount as volume. An important part is that we set both the Rathole and Traefik containers on the same **external** network `proxy` so they can communicate with each other and with the host.
@@ -237,11 +237,11 @@ sudo chmod 600 ~/homelab/traefik-proxy/core/traefik-data/acme.json
 # core/traefik-data/traefik.yml
 
 certificatesResolvers:
-  letsencrypt:
-    acme:
-      # always start with staging certificate
-      caServer: 'https://acme-staging-v02.api.letsencrypt.org/directory'
-      # caServer: 'https://acme-v02.api.letsencrypt.org/directory'
+    letsencrypt:
+        acme:
+            # always start with staging certificate
+            caServer: 'https://acme-staging-v02.api.letsencrypt.org/directory'
+            # caServer: 'https://acme-v02.api.letsencrypt.org/directory'
 ```
 
 5. To clear the temporary staging certificates, clear the contents of `acme.json`
@@ -262,7 +262,7 @@ docker compose -f docker-compose.local.yml up -d
 
 Fortunately, Rathole makes it trivial to run multiple tunnels using a single Rathole server. We don't need to open any additional ports in the firewall or run multiple container instances. What we do need are different tunnel names, token values, and ports. Those must be unique for each tunnel/service. Also, you will need a load balancer to bind ports `80` and `443` to more than one destination port, respectively.
 
-I wrote a detailed tutorial on how to expose multiple home servers using a single Rathole server. You can read it here: [Load balancing multiple Rathole tunnels with Traefik HTTP and TCP routers](https://nemanjamitic.com/blog/2025-05-29-traefik-load-balancer).
+I wrote a detailed tutorial on how to expose multiple home servers using a single Rathole server. You can read it here: [Load balancing multiple Rathole tunnels with Traefik HTTP and TCP routers](https://patik.com/blog/2025-05-29-traefik-load-balancer).
 
 ## Open the firewall on the VPS
 

@@ -3,12 +3,12 @@ name: Deploy to GitHub Pages manually
 on:
   push:
     branches:
-      - 'disabled-main'
+      - "disabled-main"
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - "v[0-9]+.[0-9]+.[0-9]+"
   pull_request:
     branches:
-      - 'disabled-main'
+      - "disabled-main"
   workflow_dispatch:
 
 # Allow this job to clone the repo and create a page deployment
@@ -19,9 +19,9 @@ permissions:
 
 # set env vars in Github settings here
 env:
-  SITE_URL: 'https://nemanjam.github.io'
-  PLAUSIBLE_SCRIPT_URL: 'https://plausible.arm1.nemanjamitic.com/js/script.js'
-  PLAUSIBLE_DOMAIN: 'nemanjamitic.com'
+  SITE_URL: "https://patik.github.io"
+  PLAUSIBLE_SCRIPT_URL: "https://plausible.arm1.patik.com/js/script.js"
+  PLAUSIBLE_DOMAIN: "patik.com"
 
 jobs:
   build-manual:
@@ -41,7 +41,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24.7.0
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: "https://registry.npmjs.org"
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -51,7 +51,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build nemanjam.github.io
+      - name: Build patik.github.io
         run: pnpm build
 
       - name: Upload artifact

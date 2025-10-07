@@ -6,7 +6,7 @@ This functionality shares some common parts with the image gallery described in 
 
 ## What we will be building
 
-- **Demo:** https://nemanjamitic.com/
+- **Demo:** https://patik.com/
 - **Github repository:** https://github.com/nemanjam/nemanjam.github.io
 
 %[https://youtu.be/mMlD-0Ixw4c]
@@ -332,7 +332,7 @@ With this in place, we achieve the following score for the cumulative layout shi
 
 ## Completed code and demo
 
-- **Demo:** https://nemanjamitic.com/
+- **Demo:** https://patik.com/
 - **Github repository:** https://github.com/nemanjam/nemanjam.github.io
 
 The relevant files:

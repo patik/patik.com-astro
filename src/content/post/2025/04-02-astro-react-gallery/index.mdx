@@ -38,11 +38,11 @@ git checkout e0165b295db2ccc72bbbb7be4bdd7eb48f7dedae
 yarn clean && yarn install && yarn dev
 ```
 
-I decided to reimplement it, did a quick research and decided to make my own gallery component and use [dimsemenov/photoswipe](https://github.com/dimsemenov/photoswipe) package for lightbox. And that's how this article got created, while implementing I took notes about the most important and interesting parts from the process. Look at it as not necessarily the absolute best way to make image gallery with Astro and React but as one of the ways that is proven in practice and works well. 
+I decided to reimplement it, did a quick research and decided to make my own gallery component and use [dimsemenov/photoswipe](https://github.com/dimsemenov/photoswipe) package for lightbox. And that's how this article got created, while implementing I took notes about the most important and interesting parts from the process. Look at it as not necessarily the absolute best way to make image gallery with Astro and React but as one of the ways that is proven in practice and works well.
 
 ## What we will be building
 
-- **Demo:** https://nemanjamitic.com/gallery
+- **Demo:** https://patik.com/gallery
 - **Github repository:** https://github.com/nemanjam/nemanjam.github.io
 
 {/* overview.webm - https://github.com/user-attachments/assets/59744bb9-3c87-4e2c-9b10-1c830f9af554 */}
@@ -52,7 +52,7 @@ I decided to reimplement it, did a quick research and decided to make my own gal
 
 ## Image - server component, client component, slot, props
 
-This is the first dilemma and initial decision that affects all the future code that we write. Since this is a static website example we are naturally inclined to pre-render everything we can at build time, but can this work for images too? 
+This is the first dilemma and initial decision that affects all the future code that we write. Since this is a static website example we are naturally inclined to pre-render everything we can at build time, but can this work for images too?
 
 Astro provides `<Image />` component and it's a server component like any other Astro component. It is clear that we will need `onLoad`, `onClick` events on a image and events aren't possible on a server component. Yes, but maybe we can use client component wrapper and pass Astro `<Image />` component as a slot so we can have best from both - Astro component for image optimization and a `<div />` for events, could this work?
 
@@ -78,7 +78,7 @@ http://localhost:3000/_image?href=/@fs/home/username/Desktop/nemanjam.github.io/
 http://localhost:3000/_astro/morning1.CEdGhKb3_nVk9T.webp
 ```
 
-So Astro is already serving images for us, with a dedicated API endpoint we would just accomplish human friendly url rewriting, that could be useful only if some external service fetches those images, which we don't have here. 
+So Astro is already serving images for us, with a dedicated API endpoint we would just accomplish human friendly url rewriting, that could be useful only if some external service fetches those images, which we don't have here.
 
 **Conclusion:** We will use `import.meta.glob('/src/assets/images/all-images/*.jpg')` from Vite to import images as modules to obtain images at build time and pass them as props into the Gallery component.
 
@@ -111,7 +111,7 @@ We will structure code like this: `MDX (gallery.mdx) -> Astro component (Gallery
 
 Code (paraphrased):
 
-```tsx title="" 
+```tsx title=""
 // src/pages/gallery.mdx
 
 <Gallery class="not-prose grow" />
@@ -131,11 +131,11 @@ Code (paraphrased):
 
 ## Static generation, include image urls and `map()` on the client
 
-Again, interesting and important point that is easy to forget is that `images.map()` needs to be in React component in order to have infinite scroll pagination. For that all image urls (and other props) need to be bundled and available on client, that is passed as props from Astro to the React component. 
+Again, interesting and important point that is easy to forget is that `images.map()` needs to be in React component in order to have infinite scroll pagination. For that all image urls (and other props) need to be bundled and available on client, that is passed as props from Astro to the React component.
 
-If we placed `images.map()` in the Astro component we would we would have a single image list as is without any interactivity (pagination on scroll). 
+If we placed `images.map()` in the Astro component we would we would have a single image list as is without any interactivity (pagination on scroll).
 
-**Reminder:** Static "backend" runs only once - at build time. We have a Node.js runtime only in development, and not in production - in there we have just a webserver static folder for serving assets. Kind of obvious, but it can sometimes be overlooked when we decide whether to put certain code in a server or client component. 
+**Reminder:** Static "backend" runs only once - at build time. We have a Node.js runtime only in development, and not in production - in there we have just a webserver static folder for serving assets. Kind of obvious, but it can sometimes be overlooked when we decide whether to put certain code in a server or client component.
 
 ## Responsive, optimized images - `getImage()` and `<img srcset sizes />`
 
@@ -208,15 +208,15 @@ GALLERY_THUMBNAIL: {
 },
 
 // actual <img /> tag attributes that are generated with the GALLERY_THUMBNAIL
-<img 
-  sizes="(max-width: 640px) 640px, 475px" 
+<img
+  sizes="(max-width: 640px) 640px, 475px"
   srcset="
-    /_astro/river16.CcFOUvED_Z2d5kbP.webp 475w, 
+    /_astro/river16.CcFOUvED_Z2d5kbP.webp 475w,
     /_astro/river16.CcFOUvED_Z16pb6L.webp 640w
-  " 
+  "
   src="/_astro/river16.CcFOUvED_Z1Dswo2.webp"
-  width="4000" 
-  height="2252" 
+  width="4000"
+  height="2252"
 />
 
 // src/components/react/Gallery.tsx
@@ -262,9 +262,9 @@ useEffect(() => {
       setPage((prevPage) => prevPage + 1);
     }
   };
-  
+
   // ...
-  
+
   // page dependency is important for initial load to work for all resolutions
 }, [observerTarget, page, isEnd, isLoadingPageImages]);
 
@@ -349,11 +349,11 @@ Another important and interesting part is detecting bottom of the page and displ
 </div>
 ```
 
-This can be tricky because they are circularly dependent - detection triggers showing loader and displaying loader affects position of detection `<div ref={observerTarget}/>`. Another thing ot note is that detection `div` has zero height and is placed either above or bellow the loader. It is important to be the above loader because we are interested in the bottom of the images, not the loader that will disappear from the UI in a few milliseconds anyway. 
+This can be tricky because they are circularly dependent - detection triggers showing loader and displaying loader affects position of detection `<div ref={observerTarget}/>`. Another thing ot note is that detection `div` has zero height and is placed either above or bellow the loader. It is important to be the above loader because we are interested in the bottom of the images, not the loader that will disappear from the UI in a few milliseconds anyway.
 
 Another important part is controlling and fine-tuning the threshold of the observed element `<div ref={observerTarget}/>`. We do this by adjusting the positioning with `className="mt-0"`, controlling the observers callback execution frequency with `OBSERVER_DEBOUNCE`, setting the transition timing for the loader element `duration-500`, specifying how many images we load (number of rows in the gallery) using the `pageSize` constant, and how many pages of images we load initially on the first screen `initialPage` constant.
 
-All of these parameters are connected together and you need to fine tune them for smooth infinite scroll experience. Also note that `pageSize` and `initialPage` constants are responsive and need to be defined for each breakpoint independently for full and ergonomic control. 
+All of these parameters are connected together and you need to fine tune them for smooth infinite scroll experience. Also note that `pageSize` and `initialPage` constants are responsive and need to be defined for each breakpoint independently for full and ergonomic control.
 
 You can see that in the constants file in [src/constants/gallery.ts#L7](https://github.com/nemanjam/nemanjam.github.io/blob/38a37b0e6d87f7723fac7875399ff12e128d26ac/src/constants/gallery.ts#L7)
 
@@ -474,7 +474,7 @@ export const GALLERY = {
 } as const;
 ```
 
-Another optimization we can do is to stretch the empty gallery container element with `flex grow`. For that we need to modify the Page layout and pass the required Tailwind classes via the MDX frontmatter and `articleClass` prop. 
+Another optimization we can do is to stretch the empty gallery container element with `flex grow`. For that we need to modify the Page layout and pass the required Tailwind classes via the MDX frontmatter and `articleClass` prop.
 
 You can see that in [src/layouts/Page.astro#L38](https://github.com/nemanjam/nemanjam.github.io/blob/38a37b0e6d87f7723fac7875399ff12e128d26ac/src/layouts/Page.astro#L38):
 
@@ -526,7 +526,7 @@ import Gallery from '../components/Gallery.astro';
 <Gallery class="not-prose grow" />
 ```
 
-This will reduce the shift of DOM elements size, it won't make it perfect like in fully static page but for our use case it's good enough. 
+This will reduce the shift of DOM elements size, it won't make it perfect like in fully static page but for our use case it's good enough.
 
 Another point to make is that `flex` container will disable margin collapsing which is important for proper vertical spacings in MDX generated HTML. So if you do that you will need to add an additional `<div>` wrapper element without flex to re-enable proper margin collapsing.
 
@@ -590,7 +590,7 @@ return (
   <>
 ```
 
-Note that for a simplicity sake we are using a simple fixed image and Photoswipe implements scale transition on its own. By default it uses a simple link `<a href={image.lightbox.src}>` to load the `<img src />` in the full page lightbox. 
+Note that for a simplicity sake we are using a simple fixed image and Photoswipe implements scale transition on its own. By default it uses a simple link `<a href={image.lightbox.src}>` to load the `<img src />` in the full page lightbox.
 
 This is a tradeoff for simplicity. Loading a responsive image with `srcset` would require integrating a custom component which could be a topic for another article. Another possible improvement is to enable closing lightbox on backdrop click on mobile which is not the case with the default config.
 
@@ -615,7 +615,7 @@ export const IMAGE_SIZES = {
 
 ## Completed code and demo
 
-- **Demo:** https://nemanjamitic.com/gallery
+- **Demo:** https://patik.com/gallery
 - **Github repository:** https://github.com/nemanjam/nemanjam.github.io
 
 The relevant files:
@@ -641,7 +641,7 @@ git checkout e0165b295db2ccc72bbbb7be4bdd7eb48f7dedae
 
 ## Outro
 
-That was a pretty long read, thank you for your attention and dedication. Have you implemented an Astro image gallery yourself and used a different approach? Do you have suggestions for improvements or spotted anything incorrect? Don't hesitate to leave a comment below. 
+That was a pretty long read, thank you for your attention and dedication. Have you implemented an Astro image gallery yourself and used a different approach? Do you have suggestions for improvements or spotted anything incorrect? Don't hesitate to leave a comment below.
 
 ## References
 

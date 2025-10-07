@@ -16,7 +16,7 @@ I decided to reimplement it, did a quick research and decided to make my own gal
 
 ## What we will be building
 
-- **Demo:** https://nemanjamitic.com/gallery
+- **Demo:** https://patik.com/gallery
 - **Github repository:** https://github.com/nemanjam/nemanjam.github.io
 
 {% youtube BiYwyBfjaXI %}
@@ -59,20 +59,22 @@ The code is as follows [src/libs/gallery/images.ts#L16](https://github.com/neman
 // src/libs/gallery/images.ts
 
 export const getGalleryImagesMetadata = (): ImageMetadata[] => {
-  const imageModules = import.meta.glob<{ default: ImageMetadata }>(
-    // can't be a variable
-    '/src/assets/images/all-images/*.jpg',
-    { eager: true }
-  );
+    const imageModules = import.meta.glob<{ default: ImageMetadata }>(
+        // can't be a variable
+        '/src/assets/images/all-images/*.jpg',
+        { eager: true },
+    );
 
-  // convert map to array
-  const imagesMetadata = Object.keys(imageModules)
-    // filter excluded filenames
-    .filter((path) => !EXCLUDE_IMAGES.some((excludedFileName) => path.endsWith(excludedFileName)))
-    // return metadata array
-    .map((path) => imageModules[path].default);
+    // convert map to array
+    const imagesMetadata = Object.keys(imageModules)
+        // filter excluded filenames
+        .filter(
+            (path) => !EXCLUDE_IMAGES.some((excludedFileName) => path.endsWith(excludedFileName)),
+        )
+        // return metadata array
+        .map((path) => imageModules[path].default);
 
-  return imagesMetadata;
+    return imagesMetadata;
 };
 ```
 
@@ -121,25 +123,25 @@ Note that only thumbnail uses responsive image, and lightbox uses a fixed size i
 
 // common props
 const defaultAstroImageOptions = {
-  format: 'webp',
+    format: 'webp',
 };
 
 // thumbnail preset
 export const thumbnailImageOptions = {
-  ...IMAGE_SIZES.RESPONSIVE.GALLERY_THUMBNAIL,
+    ...IMAGE_SIZES.RESPONSIVE.GALLERY_THUMBNAIL,
 };
 
 // lightbox preset
 export const lightboxImageOptions = {
-  ...IMAGE_SIZES.FIXED.MDX_2XL_16_9,
+    ...IMAGE_SIZES.FIXED.MDX_2XL_16_9,
 };
 
 // getImage() wrapper
 export const getCustomImage = async (options: UnresolvedImageTransform): Promise<GetImageResult> =>
-  getImage({
-    ...defaultAstroImageOptions,
-    ...options,
-  });
+    getImage({
+        ...defaultAstroImageOptions,
+        ...options,
+    });
 ```
 
 After that we use `getCustomImage()` to optimize gallery images that we previously loaded with `import.meta.glob()` in [src/libs/gallery/images.ts#L50](https://github.com/nemanjam/nemanjam.github.io/blob/6ef147e4b13b718d43ac24df6122dd1033e3d194/src/libs/gallery/images.ts#L50):
@@ -148,22 +150,22 @@ After that we use `getCustomImage()` to optimize gallery images that we previous
 // src/libs/gallery/images.ts
 
 export const getGalleryImages = async (): Promise<GalleryImage[]> => {
-  const thumbnails = await getCustomImages(thumbnailImageOptions);
-  const lightBoxes = await getCustomImages(lightboxImageOptions);
+    const thumbnails = await getCustomImages(thumbnailImageOptions);
+    const lightBoxes = await getCustomImages(lightboxImageOptions);
 
-  const galleryImages = mergeArrays(thumbnails, lightBoxes).map(([thumbnail, lightbox]) => ({
-    thumbnail: imageResultToImageAttributes(thumbnail),
-    lightbox: imageResultToImageAttributes(lightbox),
-  }));
+    const galleryImages = mergeArrays(thumbnails, lightBoxes).map(([thumbnail, lightbox]) => ({
+        thumbnail: imageResultToImageAttributes(thumbnail),
+        lightbox: imageResultToImageAttributes(lightbox),
+    }));
 
-  return galleryImages;
+    return galleryImages;
 };
 
 // select only needed attributes for the <img /> tag
 export const imageResultToImageAttributes = (imageResult: GetImageResult): ImgTagAttributes => ({
-  src: imageResult.src,
-  srcSet: imageResult.srcSet?.attribute,
-  ...imageResult.attributes,
+    src: imageResult.src,
+    srcSet: imageResult.srcSet?.attribute,
+    ...imageResult.attributes,
 });
 ```
 
@@ -221,42 +223,42 @@ The following code does that [src/components/react/Gallery.tsx#L132](https://git
 const [loadedImages, setLoadedImages] = useState<GalleryImage[]>([]);
 
 const isLoadingPageImages = useMemo(
-  () => !Object.values(loadedStates).every(Boolean),
-  [loadedStates, loadedImages.length]
+    () => !Object.values(loadedStates).every(Boolean),
+    [loadedStates, loadedImages.length],
 );
 
 useEffect(() => {
-  const callback: IntersectionObserverCallback = (entries) => {
-    // must wait here for images to load
-    if (!isEnd && !isLoadingPageImages && entries[0].isIntersecting) {
-      setPage((prevPage) => prevPage + 1);
-    }
-  };
+    const callback: IntersectionObserverCallback = (entries) => {
+        // must wait here for images to load
+        if (!isEnd && !isLoadingPageImages && entries[0].isIntersecting) {
+            setPage((prevPage) => prevPage + 1);
+        }
+    };
 
-  // ...
+    // ...
 
-  // page dependency is important for initial load to work for all resolutions
+    // page dependency is important for initial load to work for all resolutions
 }, [observerTarget, page, isEnd, isLoadingPageImages]);
 
 const handleLoad = (src: string) => {
-  setLoadedStates((prev) => ({ ...prev, [src]: true }));
+    setLoadedStates((prev) => ({ ...prev, [src]: true }));
 };
 
 {
-  loadedImages.map((image) => (
-    // ...
-    <img
-      {...image.thumbnail}
-      onLoad={() => handleLoad(image.thumbnail.src)}
-      alt={loadedStates[image.thumbnail.src] ? 'Gallery image' : ''}
-      className={cn(
-        'w-full transition-all duration-[2s] ease-in-out',
-        loadedStates[image.thumbnail.src]
-          ? 'opacity-100 blur-0 grayscale-0'
-          : 'opacity-75 blur-sm grayscale'
-      )}
-    />
-  ));
+    loadedImages.map((image) => (
+        // ...
+        <img
+            {...image.thumbnail}
+            onLoad={() => handleLoad(image.thumbnail.src)}
+            alt={loadedStates[image.thumbnail.src] ? 'Gallery image' : ''}
+            className={cn(
+                'w-full transition-all duration-[2s] ease-in-out',
+                loadedStates[image.thumbnail.src]
+                    ? 'opacity-100 blur-0 grayscale-0'
+                    : 'opacity-75 blur-sm grayscale',
+            )}
+        />
+    ));
 }
 ```
 
@@ -275,24 +277,24 @@ The code for this is in [src/components/react/Gallery.tsx#L76](https://github.co
 
 // sets only page
 useEffect(() => {
-  const callback: IntersectionObserverCallback = (entries) => {
-    // must wait here for images to load
-    if (!isEnd && !isLoadingPageImages && entries[0].isIntersecting) {
-      setPage((prevPage) => prevPage + 1);
-    }
-  };
-  const debouncedCallback = debounce(callback, OBSERVER_DEBOUNCE);
-  const options: IntersectionObserverInit = { threshold: 1 };
+    const callback: IntersectionObserverCallback = (entries) => {
+        // must wait here for images to load
+        if (!isEnd && !isLoadingPageImages && entries[0].isIntersecting) {
+            setPage((prevPage) => prevPage + 1);
+        }
+    };
+    const debouncedCallback = debounce(callback, OBSERVER_DEBOUNCE);
+    const options: IntersectionObserverInit = { threshold: 1 };
 
-  const observer = new IntersectionObserver(debouncedCallback, options);
+    const observer = new IntersectionObserver(debouncedCallback, options);
 
-  const observerRef = observerTarget.current;
-  if (observerRef) observer.observe(observerRef);
+    const observerRef = observerTarget.current;
+    if (observerRef) observer.observe(observerRef);
 
-  return () => {
-    if (observerRef) observer.unobserve(observerRef);
-  };
-  // page dependency is important for initial load to work for all resolutions
+    return () => {
+        if (observerRef) observer.unobserve(observerRef);
+    };
+    // page dependency is important for initial load to work for all resolutions
 }, [observerTarget, page, isEnd, isLoadingPageImages]);
 ```
 
@@ -334,22 +336,22 @@ You can see that in the constants file in [src/constants/gallery.ts#L7](https://
 // src/constants/gallery.ts
 
 export const GALLERY = {
-  GALLERY_ID: 'my-gallery',
-  // Todo: make it responsive
-  /** step. */
-  PAGE_SIZE: {
-    XS: 1,
-    SM: 2,
-    LG: 3,
-  },
-  /** page dependency in useEffect is more important. To load first screen quickly, set to 3 pages */
-  INITIAL_PAGE: {
-    XS: 3,
-    SM: 3,
-    LG: 3,
-  },
-  /** fine tuned for scroll */
-  OBSERVER_DEBOUNCE: 300,
+    GALLERY_ID: 'my-gallery',
+    // Todo: make it responsive
+    /** step. */
+    PAGE_SIZE: {
+        XS: 1,
+        SM: 2,
+        LG: 3,
+    },
+    /** page dependency in useEffect is more important. To load first screen quickly, set to 3 pages */
+    INITIAL_PAGE: {
+        XS: 3,
+        SM: 3,
+        LG: 3,
+    },
+    /** fine tuned for scroll */
+    OBSERVER_DEBOUNCE: 300,
 } as const;
 ```
 
@@ -362,29 +364,29 @@ const { PAGE_SIZE, INITIAL_PAGE } = GALLERY;
 
 // related to gallery grid css
 const breakpointToPageKey = {
-  XXS: 'XS',
-  XS: 'XS',
-  SM: 'SM',
-  MD: 'SM',
-  LG: 'LG',
-  XL: 'LG',
-  _2XL: 'LG',
+    XXS: 'XS',
+    XS: 'XS',
+    SM: 'SM',
+    MD: 'SM',
+    LG: 'LG',
+    XL: 'LG',
+    _2XL: 'LG',
 } as const;
 
 const defaultPageKey = 'LG' as const;
 
 export const getPageSize = (breakpoint: Breakpoint): number => {
-  const key = breakpointToPageKey[breakpoint] ?? defaultPageKey;
-  const pageSize = PAGE_SIZE[key];
+    const key = breakpointToPageKey[breakpoint] ?? defaultPageKey;
+    const pageSize = PAGE_SIZE[key];
 
-  return pageSize;
+    return pageSize;
 };
 
 export const getInitialPage = (breakpoint: Breakpoint): number => {
-  const key = breakpointToPageKey[breakpoint] ?? defaultPageKey;
-  const initialPage = INITIAL_PAGE[key];
+    const key = breakpointToPageKey[breakpoint] ?? defaultPageKey;
+    const initialPage = INITIAL_PAGE[key];
 
-  return initialPage;
+    return initialPage;
 };
 ```
 
@@ -398,24 +400,24 @@ Also pay attention how we "fetch" a new page of images to update:
 // src/components/react/Gallery.tsx
 
 const fetchImagesUpToPage = (
-  images: GalleryImage[],
-  pageSize: number,
-  nextPage: number
+    images: GalleryImage[],
+    pageSize: number,
+    nextPage: number,
 ): GalleryImage[] => {
-  const endIndex = nextPage * pageSize;
-  const isLastPage = endIndex >= images.length;
+    const endIndex = nextPage * pageSize;
+    const isLastPage = endIndex >= images.length;
 
-  // for fetchPageImages pagination startIndex must use loadedImages and not all images and page
-  const selectedImages = images.slice(0, endIndex);
+    // for fetchPageImages pagination startIndex must use loadedImages and not all images and page
+    const selectedImages = images.slice(0, endIndex);
 
-  // load all images for last page
-  return !isLastPage ? sliceToModN(selectedImages, pageSize) : selectedImages;
+    // load all images for last page
+    return !isLastPage ? sliceToModN(selectedImages, pageSize) : selectedImages;
 };
 
 // converts page to loaded images
 useEffect(() => {
-  const upToPageImages = fetchImagesUpToPage(images, pageSize, page);
-  setLoadedImages(upToPageImages);
+    const upToPageImages = fetchImagesUpToPage(images, pageSize, page);
+    setLoadedImages(upToPageImages);
 }, [page, images, pageSize]);
 ```
 
@@ -432,18 +434,18 @@ Layout shift is important web vitals parameter and it's more challenging to opti
 // src/constants/gallery.ts
 
 export const GALLERY = {
-  // ...
-  PAGE_SIZE: {
-    XS: 1,
-    SM: 2,
-    LG: 3,
-  },
-  INITIAL_PAGE: {
-    XS: 3,
-    SM: 3,
-    LG: 3,
-  },
-  // ...
+    // ...
+    PAGE_SIZE: {
+        XS: 1,
+        SM: 2,
+        LG: 3,
+    },
+    INITIAL_PAGE: {
+        XS: 3,
+        SM: 3,
+        LG: 3,
+    },
+    // ...
 } as const;
 ```
 
@@ -578,23 +580,23 @@ Lightbox image size is defined in [src/libs/gallery/transform.ts#L24](https://gi
 // src/libs/gallery/transform.ts
 
 export const lightboxImageOptions = {
-  ...IMAGE_SIZES.FIXED.MDX_2XL_16_9,
+    ...IMAGE_SIZES.FIXED.MDX_2XL_16_9,
 };
 
 // src/constants/image.ts
 
 export const IMAGE_SIZES = {
-  FIXED: {
+    FIXED: {
+        // ...
+        MDX_2XL_16_9: { width: TW_SCREENS._2XL, height: TW_SCREENS.HEIGHTS._2XL },
+    },
     // ...
-    MDX_2XL_16_9: { width: TW_SCREENS._2XL, height: TW_SCREENS.HEIGHTS._2XL },
-  },
-  // ...
 };
 ```
 
 ## Completed code and demo
 
-- **Demo:** https://nemanjamitic.com/gallery
+- **Demo:** https://patik.com/gallery
 - **Github repository:** https://github.com/nemanjam/nemanjam.github.io
 
 The relevant files:

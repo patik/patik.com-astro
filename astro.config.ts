@@ -23,40 +23,40 @@ const remarkPlugins = [remarkReadingTime];
 const rehypePlugins = [rehypeExternalLinks];
 
 export default defineConfig({
-  site: SITE_URL,
-  trailingSlash: 'ignore',
-  env: envSchema,
-  // default
-  compressHTML: true,
-  server: { port: 3000 },
-  devToolbar: { enabled: false },
-  integrations: [
-    expressiveCodeIntegration(),
-    sitemapIntegration(),
-    react(),
-    // don't pass any plugins here, it will disable all mdx integrations, e.g. expressive-code above
-    mdx(),
-    // applyBaseStyles: false prevents double loading of tailwind
-    tailwind({ applyBaseStyles: false }),
-    icon({ iconDir: 'src/assets/icons' }),
-    partytown({
-      config: { forward: ['dataLayer.push'] },
-    }),
-  ],
-  // pass rehype plugins only here, mdx will reuse them
-  markdown: { remarkPlugins, rehypePlugins },
-  vite: {
-    build: {
-      sourcemap: false,
+    site: SITE_URL,
+    trailingSlash: 'ignore',
+    env: envSchema,
+    // default
+    compressHTML: true,
+    server: { port: 3000 },
+    devToolbar: { enabled: false },
+    integrations: [
+        expressiveCodeIntegration(),
+        sitemapIntegration(),
+        react(),
+        // don't pass any plugins here, it will disable all mdx integrations, e.g. expressive-code above
+        mdx(),
+        // applyBaseStyles: false prevents double loading of tailwind
+        tailwind({ applyBaseStyles: false }),
+        icon({ iconDir: 'src/assets/icons' }),
+        partytown({
+            config: { forward: ['dataLayer.push'] },
+        }),
+    ],
+    // pass rehype plugins only here, mdx will reuse them
+    markdown: { remarkPlugins, rehypePlugins },
+    vite: {
+        build: {
+            sourcemap: false,
+        },
+        server: {
+            // applies only to Vite dev server
+            allowedHosts: ['localhost', 'preview1.amd1.patik.com'],
+        },
+        // import { z } from 'astro:content'; (collections) // must use zod v3 (with pnpm)
+        // import { z } from 'zod'; (config) // must use zod v4
+        ssr: {
+            noExternal: ['zod'],
+        },
     },
-    server: {
-      // applies only to Vite dev server
-      allowedHosts: ['localhost', 'preview1.amd1.nemanjamitic.com'],
-    },
-    // import { z } from 'astro:content'; (collections) // must use zod v3 (with pnpm)
-    // import { z } from 'zod'; (config) // must use zod v4
-    ssr: {
-      noExternal: ['zod'],
-    },
-  },
 });

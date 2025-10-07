@@ -1,29 +1,29 @@
-# Developer blog [nemanjamitic.com](https://nemanjamitic.com)
+# Developer blog [patik.com](https://patik.com)
 
-This is the repository for my coding blog [nemanjamitic.com](https://nemanjamitic.com). Free and open source, feel free to reuse code and customize for your own developer blog. Blog posts (future) require attribution.
+This is the repository for my coding blog [patik.com](https://patik.com). Free and open source, feel free to reuse code and customize for your own developer blog. Blog posts (future) require attribution.
 
 ## Mirrors
 
-| Method       | Url                                      |
-| :----------- | :--------------------------------------- |
-| Nginx        | https://nemanjamitic.com                 |
-| Github Pages | https://nemanjam.github.io               |
-| Docker       | https://nmc-docker.arm1.nemanjamitic.com |
+| Method       | Url                               |
+| :----------- | :-------------------------------- |
+| Nginx        | https://patik.com                 |
+| Github Pages | https://patik.github.io           |
+| Docker       | https://nmc-docker.arm1.patik.com |
 
 #### Self hosted mirrors
 
 These mirrors are hosted at my home, in my homelab and are not always online.
 
-| Method             | Url                                       |
-| :----------------- | :---------------------------------------- |
-| OrangePi Nginx     | https://pi.nemanjamitic.com               |
-| OrangePi Docker    | https://nmc-docker.pi.nemanjamitic.com    |
-| ThinkCentre Nginx  | https://local.nemanjamitic.com            |
-| ThinkCentre Docker | https://nmc-docker.local.nemanjamitic.com |
+| Method             | Url                                |
+| :----------------- | :--------------------------------- |
+| OrangePi Nginx     | https://pi.patik.com               |
+| OrangePi Docker    | https://nmc-docker.pi.patik.com    |
+| ThinkCentre Nginx  | https://local.patik.com            |
+| ThinkCentre Docker | https://nmc-docker.local.patik.com |
 
 #### Plausible analytics
 
-https://plausible.arm1.nemanjamitic.com/nemanjamitic.com
+https://plausible.arm1.patik.com/patik.com
 
 ## Screenshots
 
@@ -79,7 +79,7 @@ SITE_URL=http://localhost:3000
 ```bash
 # .env.production
 
-SITE_URL=https://nemanjamitic.com
+SITE_URL=https://patik.com
 
 # set to true to preview draft posts in production
 PREVIEW_MODE=
@@ -154,7 +154,7 @@ All Nginx deployments come down to building the website and copying the compiled
 # package.json
 
 # set your SITE_URL
-"build:nginx": "SITE_URL='https://nemanjamitic.com' astro build",
+"build:nginx": "SITE_URL='https://patik.com' astro build",
 
 # build the app
 pnpm build:nginx
@@ -217,17 +217,17 @@ After that you can build and push multi-platform images locally.
 # open terminal and login with your Dockerhub account, both locally and on remote server
 docker login my-user my-pass
 
-# replace "nemanjamitic/nemanjam.github.io" with your image name
+# replace "patik/patik.com-astro" with your image name
 # set ARG_SITE_URL_ARM64 to your production url
 # set correct architecture for your production server --platform linux/arm64 or linux/amd64
-"docker:build:push:arm": "docker buildx build -f ./docker/Dockerfile -t nemanjamitic/nemanjam.github.io --build-arg ARG_SITE_URL_ARM64='https://nmc-docker.arm1.nemanjamitic.com' --platform linux/arm64 --progress=plain --push .",
+"docker:build:push:arm": "docker buildx build -f ./docker/Dockerfile -t patik/patik.com-astro --build-arg ARG_SITE_URL_ARM64='https://nmc-docker.arm1.patik.com' --platform linux/arm64 --progress=plain --push .",
 
 # build and push Docker image, replace "arm" with your architecture
 pnpm docker:build:push:arm
 
 # replace "~/traefik-proxy/apps/nmc-docker" with your path to docker-compose.yml
-# replace "nemanjamitic/nemanjam.github.io" with your image name
-"deploy:docker": "bash scripts/deploy-docker.sh arm1 '~/traefik-proxy/apps/nmc-docker' nemanjamitic/nemanjam.github.io",
+# replace "patik/patik.com-astro" with your image name
+"deploy:docker": "bash scripts/deploy-docker.sh arm1 '~/traefik-proxy/apps/nmc-docker' patik/patik.com-astro",
 
 # pull and run latest image on your production server
 pnpm deploy:docker

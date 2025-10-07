@@ -1,6 +1,6 @@
 ## Introduction
 
-This article is a continuation of [Expose home server with Rathole tunnel and Traefik](https://nemanjamitic.com/blog/2025-04-29-rathole-traefik-home-server) article, which explains how to permanently host websites from home by bypassing CGNAT. That setup works well for exposing a single home server (like a Raspberry Pi, server PC, or virtual machine), but it has a limitation: it requires one VPS (or at least one public network interface) per home server. This is because the Rathole server exclusively uses ports `80` and `443`.
+This article is a continuation of [Expose home server with Rathole tunnel and Traefik](https://patik.com/blog/2025-04-29-rathole-traefik-home-server) article, which explains how to permanently host websites from home by bypassing CGNAT. That setup works well for exposing a single home server (like a Raspberry Pi, server PC, or virtual machine), but it has a limitation: it requires one VPS (or at least one public network interface) per home server. This is because the Rathole server exclusively uses ports `80` and `443`.
 
 But it doesn't have to be like this. We can reuse a single Rathole server for many tunnels and home servers, we just need a tool to load balance their traffic, as long as our VPS's network interface provides enough bandwidth for our websites and services.
 
@@ -21,18 +21,18 @@ The main problem here is that we can't bind more than one port to ports `80` and
 # docker-compose.yml
 
 services:
-  rathole:
-    image: rapiz1/rathole:v0.5.0
-    container_name: rathole
-    command: --server /config/rathole.server.toml
-    restart: unless-stopped
-    ports:
-      # host:container
-      - 2333:2333
-      - 80:5080,5081 # non existent syntax, can't bind two ports to a single port
-      - 443:5443,5444 # same
-    volumes:
-      - ./rathole.server.toml:/config/rathole.server.toml:ro
+    rathole:
+        image: rapiz1/rathole:v0.5.0
+        container_name: rathole
+        command: --server /config/rathole.server.toml
+        restart: unless-stopped
+        ports:
+            # host:container
+            - 2333:2333
+            - 80:5080,5081 # non existent syntax, can't bind two ports to a single port
+            - 443:5443,5444 # same
+        volumes:
+            - ./rathole.server.toml:/config/rathole.server.toml:ro
 ```
 
 Neither the operating system nor Docker provides load balancing functionality out of the box, we need to handle it ourselves.
@@ -50,7 +50,7 @@ For each home server, we need 2 tunnels: one for HTTP and another for HTTPS traf
 
 **Reminder:**
 
-I already wrote about the advantage of resolving SSL certificates locally on the home server in the [Architecture overview](https://nemanjamitic.com/blog/2025-04-29-rathole-traefik-home-server#architecture-overview) section of the previous article, but here is a quick recap:
+I already wrote about the advantage of resolving SSL certificates locally on the home server in the [Architecture overview](https://patik.com/blog/2025-04-29-rathole-traefik-home-server#architecture-overview) section of the previous article, but here is a quick recap:
 
 1. The home server contains its entire configuration
 2. The home server is tunnel-agnostic and reusable
@@ -76,85 +76,85 @@ Below is the complete `docker-compose.yml` that defines the Traefik TCP router a
 version: '3.8'
 
 services:
-  traefik:
-    image: traefik:v2.9.8
-    container_name: traefik
-    restart: unless-stopped
-    command:
-      - --providers.docker=true
-      - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
-      - --entrypoints.traefik.address=:8080
-      - --api.dashboard=true
-      - --api.insecure=false
-      - --log.level=DEBUG
-      - --accesslog=true
-    ports:
-      - 80:80
-      - 443:443
-      - 8080:8080
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      - proxy
-    labels:
-      # Enable the dashboard at http://traefik.amd2.nemanjamitic.com
-      # http for simplicity, no acme.json file
-      - traefik.enable=true
-      - 'traefik.http.routers.traefik.rule=Host(`traefik.amd2.${SITE_HOSTNAME}`)'
-      - traefik.http.routers.traefik.entrypoints=web
-      - traefik.http.routers.traefik.service=api@internal
-      - traefik.http.routers.traefik.middlewares=auth
-      - 'traefik.http.middlewares.auth.basicauth.users=${TRAEFIK_AUTH}'
+    traefik:
+        image: traefik:v2.9.8
+        container_name: traefik
+        restart: unless-stopped
+        command:
+            - --providers.docker=true
+            - --entrypoints.web.address=:80
+            - --entrypoints.websecure.address=:443
+            - --entrypoints.traefik.address=:8080
+            - --api.dashboard=true
+            - --api.insecure=false
+            - --log.level=DEBUG
+            - --accesslog=true
+        ports:
+            - 80:80
+            - 443:443
+            - 8080:8080
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+        networks:
+            - proxy
+        labels:
+            # Enable the dashboard at http://traefik.amd2.patik.com
+            # http for simplicity, no acme.json file
+            - traefik.enable=true
+            - 'traefik.http.routers.traefik.rule=Host(`traefik.amd2.${SITE_HOSTNAME}`)'
+            - traefik.http.routers.traefik.entrypoints=web
+            - traefik.http.routers.traefik.service=api@internal
+            - traefik.http.routers.traefik.middlewares=auth
+            - 'traefik.http.middlewares.auth.basicauth.users=${TRAEFIK_AUTH}'
 
-  rathole:
-    image: rapiz1/rathole:v0.5.0
-    container_name: rathole
-    command: --server /config/rathole.server.toml
-    restart: unless-stopped
-    ports:
-      - 2333:2333
-    volumes:
-      - ./rathole.server.toml:/config/rathole.server.toml:ro
-    networks:
-      - proxy
+    rathole:
+        image: rapiz1/rathole:v0.5.0
+        container_name: rathole
+        command: --server /config/rathole.server.toml
+        restart: unless-stopped
+        ports:
+            - 2333:2333
+        volumes:
+            - ./rathole.server.toml:/config/rathole.server.toml:ro
+        networks:
+            - proxy
 
-    labels:
-      ### HTTP port 80 - HTTP routers ###
+        labels:
+            ### HTTP port 80 - HTTP routers ###
 
-      # pi.nemanjamitic.com, www.pi.nemanjamitic.com, *.pi.nemanjamitic.com, www.*.pi.nemanjamitic.com
+            # pi.patik.com, www.pi.patik.com, *.pi.patik.com, www.*.pi.patik.com
 
-      # Route *.pi.nemanjamitic.com -> 5080
-      - 'traefik.http.routers.rathole-pi.rule=HostRegexp(`pi.${SITE_HOSTNAME}`, `www.pi.${SITE_HOSTNAME}`, `{subdomain:[a-z0-9-]+}.pi.${SITE_HOSTNAME}`, `www.{subdomain:[a-z0-9-]+}.pi.${SITE_HOSTNAME}`)'
-      - traefik.http.routers.rathole-pi.entrypoints=web
-      - traefik.http.routers.rathole-pi.service=rathole-pi
-      - traefik.http.services.rathole-pi.loadbalancer.server.port=5080
+            # Route *.pi.patik.com -> 5080
+            - 'traefik.http.routers.rathole-pi.rule=HostRegexp(`pi.${SITE_HOSTNAME}`, `www.pi.${SITE_HOSTNAME}`, `{subdomain:[a-z0-9-]+}.pi.${SITE_HOSTNAME}`, `www.{subdomain:[a-z0-9-]+}.pi.${SITE_HOSTNAME}`)'
+            - traefik.http.routers.rathole-pi.entrypoints=web
+            - traefik.http.routers.rathole-pi.service=rathole-pi
+            - traefik.http.services.rathole-pi.loadbalancer.server.port=5080
 
-      # Route *.local.nemanjamitic.com -> 5081
-      - 'traefik.http.routers.rathole-local.rule=HostRegexp(`local.${SITE_HOSTNAME}`, `www.local.${SITE_HOSTNAME}`, `{subdomain:[a-z0-9-]+}.local.${SITE_HOSTNAME}`, `www.{subdomain:[a-z0-9-]+}.local.${SITE_HOSTNAME}`)'
-      - traefik.http.routers.rathole-local.entrypoints=web
-      - traefik.http.routers.rathole-local.service=rathole-local
-      - traefik.http.services.rathole-local.loadbalancer.server.port=5081
+            # Route *.local.patik.com -> 5081
+            - 'traefik.http.routers.rathole-local.rule=HostRegexp(`local.${SITE_HOSTNAME}`, `www.local.${SITE_HOSTNAME}`, `{subdomain:[a-z0-9-]+}.local.${SITE_HOSTNAME}`, `www.{subdomain:[a-z0-9-]+}.local.${SITE_HOSTNAME}`)'
+            - traefik.http.routers.rathole-local.entrypoints=web
+            - traefik.http.routers.rathole-local.service=rathole-local
+            - traefik.http.services.rathole-local.loadbalancer.server.port=5081
 
-      ### HTTPS port 443 with TLS passthrough - TCP routers ###
+            ### HTTPS port 443 with TLS passthrough - TCP routers ###
 
-      # Route *.pi.nemanjamitic.com -> 5443
-      - 'traefik.tcp.routers.rathole-pi-secure.rule=HostSNIRegexp(`pi.${SITE_HOSTNAME}`, `www.pi.${SITE_HOSTNAME}`, `{subdomain:[a-z0-9-]+}.pi.${SITE_HOSTNAME}`, `www.{subdomain:[a-z0-9-]+}.pi.${SITE_HOSTNAME}`)'
-      - traefik.tcp.routers.rathole-pi-secure.entrypoints=websecure
-      - traefik.tcp.routers.rathole-pi-secure.tls.passthrough=true
-      - traefik.tcp.routers.rathole-pi-secure.service=rathole-pi-secure
-      - traefik.tcp.services.rathole-pi-secure.loadbalancer.server.port=5443
+            # Route *.pi.patik.com -> 5443
+            - 'traefik.tcp.routers.rathole-pi-secure.rule=HostSNIRegexp(`pi.${SITE_HOSTNAME}`, `www.pi.${SITE_HOSTNAME}`, `{subdomain:[a-z0-9-]+}.pi.${SITE_HOSTNAME}`, `www.{subdomain:[a-z0-9-]+}.pi.${SITE_HOSTNAME}`)'
+            - traefik.tcp.routers.rathole-pi-secure.entrypoints=websecure
+            - traefik.tcp.routers.rathole-pi-secure.tls.passthrough=true
+            - traefik.tcp.routers.rathole-pi-secure.service=rathole-pi-secure
+            - traefik.tcp.services.rathole-pi-secure.loadbalancer.server.port=5443
 
-      # Route *.local.nemanjamitic.com -> 5444
-      - 'traefik.tcp.routers.rathole-local-secure.rule=HostSNIRegexp(`local.${SITE_HOSTNAME}`, `www.local.${SITE_HOSTNAME}`, `{subdomain:[a-z0-9-]+}.local.${SITE_HOSTNAME}`, `www.{subdomain:[a-z0-9-]+}.local.${SITE_HOSTNAME}`)'
-      - traefik.tcp.routers.rathole-local-secure.entrypoints=websecure
-      - traefik.tcp.routers.rathole-local-secure.tls.passthrough=true
-      - traefik.tcp.routers.rathole-local-secure.service=rathole-local-secure
-      - traefik.tcp.services.rathole-local-secure.loadbalancer.server.port=5444
+            # Route *.local.patik.com -> 5444
+            - 'traefik.tcp.routers.rathole-local-secure.rule=HostSNIRegexp(`local.${SITE_HOSTNAME}`, `www.local.${SITE_HOSTNAME}`, `{subdomain:[a-z0-9-]+}.local.${SITE_HOSTNAME}`, `www.{subdomain:[a-z0-9-]+}.local.${SITE_HOSTNAME}`)'
+            - traefik.tcp.routers.rathole-local-secure.entrypoints=websecure
+            - traefik.tcp.routers.rathole-local-secure.tls.passthrough=true
+            - traefik.tcp.routers.rathole-local-secure.service=rathole-local-secure
+            - traefik.tcp.services.rathole-local-secure.loadbalancer.server.port=5444
 
 networks:
-  proxy:
-    external: true
+    proxy:
+        external: true
 ```
 
 Let's start with the most important part: the `labels` on the `rathole` container that define load balancing on the two tunnels.
@@ -163,7 +163,7 @@ First, we define two HTTP routers using the `HostRegexp()` matcher. It takes HTT
 
 The second pair of labels defines a TCP router that takes traffic from the HTTPS entrypoint on port `443`, passes it through without decrypting, and load balances it between tunnels on ports `5443` and `5444`. Note that with the `HostSNIRegexp()` matcher, you can't include escaped dots (`.`) in the regex, you must repeat the entire domain sequence to handle the `www` variant of the domain.
 
-Also note that we use separate regex variants to match the root subdomain explicitly, e.g. `pi.nemanjamitic.com` and `www.pi.nemanjamitic.com` for both HTTP and TCP routers.
+Also note that we use separate regex variants to match the root subdomain explicitly, e.g. `pi.patik.com` and `www.pi.patik.com` for both HTTP and TCP routers.
 
 That's it, this is the main load balancing logic definition.
 
@@ -301,50 +301,50 @@ local_addr = "traefik:443"
 version: '3.8'
 
 services:
-  rathole:
-    image: rapiz1/rathole:v0.5.0
-    container_name: rathole
-    command: --client /config/rathole.client.toml
-    restart: unless-stopped
-    volumes:
-      - ./rathole.client.toml:/config/rathole.client.toml:ro
-    networks:
-      - proxy
+    rathole:
+        image: rapiz1/rathole:v0.5.0
+        container_name: rathole
+        command: --client /config/rathole.client.toml
+        restart: unless-stopped
+        volumes:
+            - ./rathole.client.toml:/config/rathole.client.toml:ro
+        networks:
+            - proxy
 
-  traefik:
-    image: 'traefik:v2.9.8'
-    container_name: traefik
-    restart: unless-stopped
-    depends_on:
-      - rathole
-    command:
-      # moved from static conf to pass email as env var
-      - '--certificatesresolvers.letsencrypt.acme.email=${TRAEFIK_LETSENCRYPT_EMAIL}'
-    security_opt:
-      - no-new-privileges:true
-    networks:
-      - proxy
-    # rathole will pass traffic through proxy network directly on 80 and 443
-    # defined in rathole.client.toml
-    environment:
-      - TRAEFIK_AUTH=${TRAEFIK_AUTH}
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./traefik-data/traefik.yml:/traefik.yml:ro
-      - ./traefik-data/acme.json:/acme.json
-      - ./traefik-data/configurations:/configurations
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.docker.network=proxy'
-      - 'traefik.http.routers.traefik-secure.entrypoints=websecure'
-      - 'traefik.http.routers.traefik-secure.rule=Host(`traefik.${SITE_HOSTNAME}`)'
-      - 'traefik.http.routers.traefik-secure.middlewares=user-auth@file'
-      - 'traefik.http.routers.traefik-secure.service=api@internal'
+    traefik:
+        image: 'traefik:v2.9.8'
+        container_name: traefik
+        restart: unless-stopped
+        depends_on:
+            - rathole
+        command:
+            # moved from static conf to pass email as env var
+            - '--certificatesresolvers.letsencrypt.acme.email=${TRAEFIK_LETSENCRYPT_EMAIL}'
+        security_opt:
+            - no-new-privileges:true
+        networks:
+            - proxy
+        # rathole will pass traffic through proxy network directly on 80 and 443
+        # defined in rathole.client.toml
+        environment:
+            - TRAEFIK_AUTH=${TRAEFIK_AUTH}
+        volumes:
+            - /etc/localtime:/etc/localtime:ro
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+            - ./traefik-data/traefik.yml:/traefik.yml:ro
+            - ./traefik-data/acme.json:/acme.json
+            - ./traefik-data/configurations:/configurations
+        labels:
+            - 'traefik.enable=true'
+            - 'traefik.docker.network=proxy'
+            - 'traefik.http.routers.traefik-secure.entrypoints=websecure'
+            - 'traefik.http.routers.traefik-secure.rule=Host(`traefik.${SITE_HOSTNAME}`)'
+            - 'traefik.http.routers.traefik-secure.middlewares=user-auth@file'
+            - 'traefik.http.routers.traefik-secure.service=api@internal'
 
 networks:
-  proxy:
-    external: true
+    proxy:
+        external: true
 ```
 
 ## Completed code
