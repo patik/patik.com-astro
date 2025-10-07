@@ -20,6 +20,11 @@ const { title = '', keywords = [] } = Astro.props
         {keywords && keywords.length > 0 ? <meta name="keywords" content={keywords.join(',')} /> : null}
         <link rel="me" href="https://mastodon.online/@craigpatik" />
         <link rel="stylesheet" href="https://use.typekit.net/tfz6xpv.css" />
+        <meta name="author" content="Craig Patik" />
+        <meta
+            name="description"
+            content="Craig Patik's homepage — travel logs & photos, and web design & development"
+        />
     </head>
     <body>
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
