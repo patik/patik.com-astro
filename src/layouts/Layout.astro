@@ -1,5 +1,10 @@
 ---
 import HeaderNav from './HeaderNav.astro'
+// Side effects
+import '../styles/blog/index.css'
+import '../styles/photos.css'
+import '../styles/site/globals.css'
+import '../styles/site/scss/style.css'
 
 const { title = '', keywords = [] } = Astro.props
 ---
@@ -13,6 +18,7 @@ const { title = '', keywords = [] } = Astro.props
         <meta name="generator" content={Astro.generator} />
         <title>{`${title ? `${title} - ` : ''}Craig Patik`}</title>
         {keywords && keywords.length > 0 ? <meta name="keywords" content={keywords.join(',')} /> : null}
+        <link rel="me" href="https://mastodon.online/@craigpatik" />
     </head>
     <body>
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
