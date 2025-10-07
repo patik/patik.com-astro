@@ -1,10 +1,8 @@
-@charset "UTF-8";
-
-@import '_foundation-overrides';
+@import '_foundation-overrides.css';
 @import 'foundation';
-@import '_mixins';
-@import '_variables';
-@import '_dark-mode';
+@import '_mixins.css';
+@import '_variables.css';
+@import '_dark-mode.css';
 
 .travel-link-list {
     --imgPositionOffset: 5px;

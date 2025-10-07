@@ -68,8 +68,6 @@ $total-columns: 12 !default;
     max-width: $row-width;
     width: 100%;
   }
-
-  @include clearfix;
 }
 
 

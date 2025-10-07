@@ -11,16 +11,16 @@ interface Window {
 type ImagesMetadata = Record<string, import('image-size/dist/types/interface').ISizeCalculationResult> | null
 
 type BlogPost = {
-    id?: number
+    id?: string
     slug: string
     title: string
     date: string
     coverImage: string
     excerpt?: string
     ogImage: string
-    content: string
+    content?: string
     categories: string[]
     unpublished?: boolean
-    imagesMetadata: ImagesMetadata
+    imagesMetadata?: ImagesMetadata
     syntaxHighlightSSRHack?: boolean
 }

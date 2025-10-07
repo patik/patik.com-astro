@@ -1,0 +1,40 @@
+---
+import config from '../../../config.json'
+import Container from '../Container'
+import Layout from '../Layout.astro'
+import Meta from '../Meta'
+import PageHeader from './PageHeader'
+import PostBody from './PostBody'
+import PostHeader from './PostHeader'
+
+const { blogUrl, blogDescription } = config
+
+interface Props {
+    post: BlogPost
+}
+
+const { post } = Astro.props
+const { title, date, content, slug, ogImage, excerpt, unpublished, imagesMetadata, syntaxHighlightSSRHack } = post
+---
+
+<Layout unpublished={unpublished}>
+    <Container>
+        <PageHeader />
+        <Meta
+            siteName={blogDescription}
+            image={ogImage}
+            description={excerpt ?? ''}
+            title={`${title} | ${blogDescription}`}
+            url={`${blogUrl}/${slug}`}
+        />
+        <article class="mb-32">
+            <PostHeader title={title} date={date} />
+            <PostBody
+                content={content ?? ''}
+                slug={slug}
+                imagesMetadata={imagesMetadata}
+                syntaxHighlightSSRHack={syntaxHighlightSSRHack}
+            />
+        </article>
+    </Container>
+</Layout>
