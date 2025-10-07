@@ -11,7 +11,6 @@ class MyDocument extends Document {
                         name="description"
                         content="Craig Patik's homepage &mdash; travel logs &amp; photos, and web design &amp; development"
                     />
-                    <link rel="stylesheet" href="https://use.typekit.net/tfz6xpv.css" />
                 </Head>
                 <body className="antialiased">
                     <Main />

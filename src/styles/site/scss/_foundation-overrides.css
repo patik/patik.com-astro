@@ -7,14 +7,14 @@
 :root {
     --default-float: left;
 
-    /* --body-bg: #fff; */
-    /* --body-font-color: #222; */
+    --body-bg: #fff;
+    --body-font-color: #222;
     --body-font-family:
         -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', 'Helvetica Neue', 'Helvetica', Helvetica, Arial,
         Calibri, 'Myriad Pro', Tahoma, sans-serif;
 
-    /* --body-font-weight: normal; */
-    /* --body-font-style: normal; */
+    --body-font-weight: normal;
+    --body-font-style: normal;
 
     /* Font-smoothing */
 
@@ -22,7 +22,7 @@
 
     /* Text direction settings */
 
-    /* --text-direction: ltr; */
+    --text-direction: ltr;
 
     /* Colors */
 

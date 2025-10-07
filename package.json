@@ -1,7 +1,12 @@
 {
-    "name": "patik-astro",
-    "type": "module",
-    "version": "0.0.1",
+    "name": "patik.com",
+    "version": "1.0.0",
+    "description": "Craig Patik’s personal web site",
+    "homepage": "https://patik.com",
+    "private": true,
+    "engines": {
+        "node": "24"
+    },
     "scripts": {
         "dev": "astro dev",
         "build": "astro build",
@@ -14,7 +19,8 @@
         "@astrojs/react": "^4.4.0",
         "astro": "^5.14.1",
         "react": "^19.2.0",
-        "react-dom": "^19.2.0"
+        "react-dom": "^19.2.0",
+        "react-google-charts": "^5.2.1"
     },
     "devDependencies": {
         "@eslint/compat": "^1.4.0",
